@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QuotesApi.Data;
 using QuotesApi.Models;
 
 namespace QuotesApi.Controllers
@@ -12,34 +13,43 @@ namespace QuotesApi.Controllers
     [ApiController]
     public class QuotesController : ControllerBase
     {
-        static List<Quote> _qoutes = new List<Quote>()
-        {
-            new Quote(){Id=0,Author="Reza Ashena",Description="description 1",Title="title one"},
-            new Quote(){Id=1,Author="John Smith",Description="description 2",Title="title two"}
-        };
+        QuotesDbContext _quotesDbContext;
 
+        public QuotesController(QuotesDbContext quotesDbContext)
+        {
+            _quotesDbContext = quotesDbContext;
+        }
+
+        // GET: api/Quotes
         [HttpGet]
         public IEnumerable<Quote> Get()
         {
-            return _qoutes;
+            return _quotesDbContext.Quoets;
         }
 
+        // GET: api/Quotes/5
+        [HttpGet("{id}", Name = "Get")]
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST: api/Quotes
         [HttpPost]
-        public void Post([FromBody]Quote quote)
+        public void Post([FromBody] string value)
         {
-            _qoutes.Add(quote);
         }
 
+        // PUT: api/Quotes/5
         [HttpPut("{id}")]
-        public void Put(int id,[FromBody]Quote quote)
+        public void Put(int id, [FromBody] string value)
         {
-            _qoutes[id] = quote;
         }
 
+        // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete (int id)
+        public void Delete(int id)
         {
-            _qoutes.RemoveAt(id);
         }
     }
 }
