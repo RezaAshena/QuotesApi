@@ -44,6 +44,15 @@ namespace QuotesApi.Controllers
 
         }
 
+        [HttpGet("[action]")]
+        public ActionResult PagingQuote(int pageNumber,int pageSize)
+        {
+            var quotes=_quotesDbContext.Quoets;
+
+            return Ok(quotes.Skip((pageNumber-1)*pageSize).Take(pageSize));
+
+        }
+
         // POST: api/Quotes
         [HttpPost]
         public IActionResult Post([FromBody] Quote quote)
