@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,16 @@ namespace QuotesApi
             //services.AddDbContext<QuotesDbContext>(option => option.UseMySql(Configuration.GetConnectionString("QuotesDBConnection")));
             services.AddDbContext<QuotesDbContext>(option => option.UseMySql(@"Data Source=localhost;Database=QuotesDB;uid=Reza;pwd=Katty2008"));
             services.AddResponseCaching();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = "https://ashenaapi.auth0.com/";
+                options.Audience = "https://localhost:44311/";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +64,10 @@ namespace QuotesApi
             });
 
             app.UseResponseCaching();
-          
+
+            // 2. Enable authentication middleware
+            app.UseAuthentication();
+
         }
     }
 }
