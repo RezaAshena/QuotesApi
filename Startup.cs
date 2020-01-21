@@ -30,6 +30,7 @@ namespace QuotesApi
             services.AddControllers();
             //services.AddDbContext<QuotesDbContext>(option => option.UseMySql(Configuration.GetConnectionString("QuotesDBConnection")));
             services.AddDbContext<QuotesDbContext>(option => option.UseMySql(@"Data Source=localhost;Database=QuotesDB;uid=Reza;pwd=Katty2008"));
+            services.AddResponseCaching();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +51,8 @@ namespace QuotesApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseResponseCaching();
           
         }
     }

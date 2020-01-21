@@ -116,5 +116,26 @@ namespace QuotesApi.Controllers
             }
 
         }
+
+        [HttpGet("[action]")]
+        [ResponseCache(Duration = 60)]
+        public ActionResult sortQuote(string sort)
+        {
+            IQueryable<Quote> quotes;
+            switch (sort)
+            {
+                case "desc":
+                    quotes = _quotesDbContext.Quoets.OrderByDescending(q => q.CreatedAt);
+                    break;
+                case "asc":
+                    quotes = _quotesDbContext.Quoets.OrderBy(q => q.CreatedAt);
+                    break;
+                default:
+                    quotes = _quotesDbContext.Quoets;
+                    break;
+            }
+
+            return Ok(quotes);
+        }
     }
 }
