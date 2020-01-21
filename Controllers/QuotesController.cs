@@ -118,7 +118,7 @@ namespace QuotesApi.Controllers
         }
 
         [HttpGet("[action]")]
-        [ResponseCache(Duration = 60)]
+        [ResponseCache(Duration = 60,Location = ResponseCacheLocation.Client)]
         public ActionResult sortQuote(string sort)
         {
             IQueryable<Quote> quotes;
