@@ -69,7 +69,7 @@ namespace QuotesApi.Controllers
                 entity.Author = quote.Author;
                 entity.Description = quote.Description;
                 entity.Type = quote.Type;
-               // entity.CreatedAt = quote.CreatedAt;
+                entity.CreatedAt = quote.CreatedAt;
 
                 _quotesDbContext.SaveChanges();
 
