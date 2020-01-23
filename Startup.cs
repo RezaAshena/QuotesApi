@@ -39,7 +39,7 @@ namespace QuotesApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = "https://ashenaapi.auth0.com/";
+                options.Authority = "https://ashena.auth0.com/";
                 options.Audience = "https://localhost:44311/";
             });
         }
