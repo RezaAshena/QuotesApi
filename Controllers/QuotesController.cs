@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QuotesApi.Data;
@@ -11,6 +13,7 @@ namespace QuotesApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuotesController : ControllerBase
     {
         QuotesDbContext _quotesDbContext;
@@ -22,6 +25,7 @@ namespace QuotesApi.Controllers
 
         // GET: api/Quotes
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Get()
         {
             return Ok(_quotesDbContext.Quoets);
@@ -62,10 +66,21 @@ namespace QuotesApi.Controllers
             return Ok(quotes);
         }
 
+        [HttpGet("[action]")]
+        public IActionResult MyQuote()
+        {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var quotes = _quotesDbContext.Quoets.Where(q => q.UserId == userId);
+            return Ok(quotes);
+        }
+
         // POST: api/Quotes
         [HttpPost]
         public IActionResult Post([FromBody] Quote quote)
         {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            quote.UserId = userId;
+
             _quotesDbContext.Quoets.Add(quote);
             _quotesDbContext.SaveChanges();
             return StatusCode(StatusCodes.Status201Created);
@@ -75,11 +90,18 @@ namespace QuotesApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Quote quote)
         {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
             var entity = _quotesDbContext.Quoets.Find(id);
 
             if (entity == null)
             {
                 return NotFound("No record found against this id.");
+            }
+
+            if (userId != entity.UserId)
+            {
+                return BadRequest("Sorry you can't update this record....");
             }
             else
             {
@@ -100,11 +122,18 @@ namespace QuotesApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
             var quote = _quotesDbContext.Quoets.Find(id);
 
             if (quote == null)
             {
                 return NotFound("No record found against this id.");
+            }
+
+            if (userId != quote.UserId)
+            {
+                return BadRequest("Sorry you can't update this record....");
             }
             else
             {
@@ -118,7 +147,7 @@ namespace QuotesApi.Controllers
         }
 
         [HttpGet("[action]")]
-        [ResponseCache(Duration = 60,Location = ResponseCacheLocation.Client)]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public ActionResult sortQuote(string sort)
         {
             IQueryable<Quote> quotes;

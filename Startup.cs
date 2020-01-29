@@ -56,6 +56,9 @@ namespace QuotesApi
 
             app.UseRouting();
 
+            // 2. Enable authentication middleware
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -65,8 +68,7 @@ namespace QuotesApi
 
             app.UseResponseCaching();
 
-            // 2. Enable authentication middleware
-            app.UseAuthentication();
+            
 
         }
     }
